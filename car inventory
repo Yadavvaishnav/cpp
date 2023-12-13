@@ -1,0 +1,124 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <limits>
+
+using namespace std;
+
+class Car {
+public:
+    string make;
+    string model;
+    int year;
+    double price;
+    bool scrapped;  
+
+    Car(string make, string model, int year, double price, bool scrapped = false)
+        : make(make), model(model), year(year), price(price), scrapped(scrapped) {}
+
+    void displayInfo() const {
+        cout << "Company: " << make << "\nModel: " << model
+             << "\nYear: " << year << "\nPrice: $" << price;
+        if (scrapped) {
+            cout << "\nThis car is scrapped.\n\n";
+        } else {
+            cout << "\n\n";
+        }
+    }
+};
+
+void addCar(vector<Car>& inventory) {
+    string make, model;
+    int year;
+    double price;
+
+    cout << "Enter company: ";
+    cin >> make;
+
+    bool isValid = true;
+    for (size_t i = 0; i < make.length(); ++i) {
+        if (!isalpha(make[i])) {
+            isValid = false;
+            break;
+        }
+    }
+
+    while (!isValid) {
+        cout << "Invalid input. Please enter a company name with alphabets only.\n";
+        cout << "Enter company: ";
+        cin >> make;
+
+        isValid = true;
+        for (size_t i = 0; i < make.length(); ++i) {
+            if (!isalpha(make[i])) {
+                isValid = false;
+                break;
+            }
+        }
+    }
+
+    cout << "Enter model: ";
+    cin >> model;
+    while (true) {
+        cout << "Enter year: ";
+        if (cin >> year) {
+            if (year > 2008) {
+                break;
+            } else {
+                cout << "Car is not allowed on the road. Scrap it!\n\n";
+                Car scrappedCar(make, model, year, 0.0, true);
+                inventory.push_back(scrappedCar);
+                return; 
+            }
+        } else {
+            cout << "Invalid input. Please enter a valid year.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
+
+    cout << "Enter price: $";
+    cin >> price;
+
+    Car newCar(make, model, year, price);
+    inventory.push_back(newCar);
+    cout << "Car added successfully!\n\n";
+}
+
+void displayInventory(const vector<Car>& inventory) {
+    cout << "Car Inventory:\n";
+    for (size_t i = 0; i < inventory.size(); ++i) {
+        inventory[i].displayInfo();
+    }
+}
+
+int main() {
+    vector<Car> carInventory;
+
+    while (true) {
+        cout << "Car Inventory Management System\n";
+        cout << "1. Add Car\n";
+        cout << "2. Display Inventory\n";
+        cout << "3. Quit\n";
+        cout << "Enter your choice: ";
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                addCar(carInventory);
+                break;
+            case 2:
+                displayInventory(carInventory);
+                break;
+            case 3:
+                cout << "Exiting program.\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    return 0;
+}
